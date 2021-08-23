@@ -63,6 +63,7 @@ def scrape_profile(url):
     friends_url = url + "//friends/"
     options = Options()
     options.binary_location = config.FIREFOX_BINARY_PATH
+    options.headless = True
     driver = webdriver.Firefox(executable_path=config.GECKODRIVER_BINARY_PATH, firefox_options=options)
     driver.get(friends_url)
     element = driver.find_element_by_xpath('//*')

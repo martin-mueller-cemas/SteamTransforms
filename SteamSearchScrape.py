@@ -51,6 +51,7 @@ def scrape_search(username, users_to_search):
 
     options = Options()
     options.binary_location = config.FIREFOX_BINARY_PATH
+    options.headless = True
     driver = webdriver.Firefox(executable_path=config.GECKODRIVER_BINARY_PATH, firefox_options=options)
     base_url = 'https://steamcommunity.com'
     driver = webdriver.Firefox()
