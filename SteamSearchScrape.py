@@ -8,6 +8,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
 from MaltegoTransform import *
 
 USERS_PER_SEARCH_PAGE = 20
@@ -45,6 +46,10 @@ def scrape_search(username, users_to_search):
 
     pages_to_search = math.ceil(users_to_search / USERS_PER_SEARCH_PAGE)
     search_results = []
+
+    options = Options()
+    options.binary_location = r'C:\Program Files\Mozilla Firefox\firefox.exe'
+    driver = webdriver.Firefox(executable_path=r'C:\geckodriver-v0.29.1-win64\geckodriver.exe', firefox_options=options)
     base_url = 'https://steamcommunity.com'
     driver = webdriver.Firefox()
 
