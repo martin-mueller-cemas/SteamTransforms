@@ -1,10 +1,13 @@
 #!/usr/bin/python3
 
 import sys
-import dryscrape
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 from bs4 import BeautifulSoup
 from MaltegoTransform import *
-import urllib.request, json 
+import urllib.request, json
+
+import config
 
 MALTEGO = MaltegoTransform()
 
@@ -17,12 +20,17 @@ def extract_current_display_name(response):
     # If the user has only had one username then no aliases are displayed
     soup = BeautifulSoup(response, 'lxml')
     return soup.select_one('span.actual_persona_name').getText()
+
 def scrape_profile(url):
     ''' Returns DOM of profile URL'''
 
-    session = dryscrape.Session()
-    session.visit(url)
-    return session.body()
+    options = Options()
+    options.binary_location = config.FIREFOX_BINARY_PATH
+    driver = webdriver.Firefox(executable_path=config.GECKODRIVER_BINARY_PATH, firefox_options=options)
+    driver.get(url)
+    element = driver.find_element_by_xpath('//*')
+    html = element.get_attribute('innerHTML')
+    return html
 
 def get_aliases_json(url):
     aliases = []

@@ -2,10 +2,13 @@
 
 import sys
 import re
-import dryscrape
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 from bs4 import BeautifulSoup
 from MaltegoTransform import *
 from random import shuffle
+
+import config
 
 MALTEGO = MaltegoTransform()
 
@@ -58,9 +61,13 @@ def extract_profile_img_url(response):
 def scrape_profile(url):
     ''' Returns DOM of profile URL'''
     friends_url = url + "//friends/"
-    session = dryscrape.Session()
-    session.visit(friends_url)
-    return session.body()
+    options = Options()
+    options.binary_location = config.FIREFOX_BINARY_PATH
+    driver = webdriver.Firefox(executable_path=config.GECKODRIVER_BINARY_PATH, firefox_options=options)
+    driver.get(friends_url)
+    element = driver.find_element_by_xpath('//*')
+    html = element.get_attribute('innerHTML')
+    return html
 
 def output():
     MALTEGO.returnOutput()

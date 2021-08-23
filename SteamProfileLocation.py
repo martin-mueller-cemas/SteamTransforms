@@ -2,9 +2,12 @@
 
 import sys
 import re
-import dryscrape
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 from bs4 import BeautifulSoup
 from MaltegoTransform import *
+
+import config
 
 MALTEGO = MaltegoTransform()
 
@@ -22,9 +25,13 @@ def output_to_maltego(location_line):
 def scrape_profile(url):
     ''' Returns DOM of profile URL'''
 
-    session = dryscrape.Session()
-    session.visit(url)
-    return session.body()
+    options = Options()
+    options.binary_location = config.FIREFOX_BINARY_PATH
+    driver = webdriver.Firefox(executable_path=config.GECKODRIVER_BINARY_PATH, firefox_options=options)
+    driver.get(url)
+    element = driver.find_element_by_xpath('//*')
+    html = element.get_attribute('innerHTML')
+    return html
 
 def extract_location_line(response):
     soup = BeautifulSoup(response, 'lxml')
