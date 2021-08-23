@@ -2,8 +2,12 @@
 
 import sys
 import math
-import dryscrape
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from MaltegoTransform import *
 
 USERS_PER_SEARCH_PAGE = 20
@@ -41,24 +45,29 @@ def scrape_search(username, users_to_search):
 
     pages_to_search = math.ceil(users_to_search / USERS_PER_SEARCH_PAGE)
     search_results = []
-    session = dryscrape.Session(base_url = 'https://steamcommunity.com')
+    base_url = 'https://steamcommunity.com'
+    driver = webdriver.Firefox()
+
     for i in range(1, pages_to_search+1):
         if i == users_to_search + 1:
             break
         if i == 1:
-            session.visit('/search/users/#text=' + username)
+            driver.get(base_url + '/search/users/#text=' + username)
         else:
-            session.visit('/search/users/#page=' + str(i) + '&text=' + username)
-        
-    # Wait for search results to load
+            driver.get(base_url + '/search/users/#page=' + str(i) + '&text=' + username)
+
+        # Wait for search results to load
         try:
-            session.wait_for(lambda: session.at_css("div.search_row"))
-        except dryscrape.mixins.WaitTimeoutError:
+            timeout = 5
+            element_present = EC.presence_of_element_located((By.CSS_SELECTOR, 'div.search_row'))
+            WebDriverWait(driver, timeout).until(element_present)
+        except TimeoutException:
             MALTEGO.addUIMessage("No results found for user " + username)
             output()
-        search_results.append(session.body())
-        # Reset session to load new page
-        session.reset()
+
+        element = driver.find_element_by_xpath('//*')
+        html = element.get_attribute('innerHTML')
+        search_results.append(html)
     return search_results
 
 def output_to_maltego(url, img_url, display_name):
