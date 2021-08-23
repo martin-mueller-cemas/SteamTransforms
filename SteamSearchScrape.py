@@ -11,6 +11,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 from MaltegoTransform import *
 
+import config
+
 USERS_PER_SEARCH_PAGE = 20
 MALTEGO = MaltegoTransform()
 
@@ -48,8 +50,8 @@ def scrape_search(username, users_to_search):
     search_results = []
 
     options = Options()
-    options.binary_location = r'C:\Program Files\Mozilla Firefox\firefox.exe'
-    driver = webdriver.Firefox(executable_path=r'C:\geckodriver-v0.29.1-win64\geckodriver.exe', firefox_options=options)
+    options.binary_location = config.FIREFOX_BINARY_PATH
+    driver = webdriver.Firefox(executable_path=config.GECKODRIVER_BINARY_PATH, firefox_options=options)
     base_url = 'https://steamcommunity.com'
     driver = webdriver.Firefox()
 
